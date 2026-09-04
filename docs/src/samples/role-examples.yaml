@@ -23,6 +23,8 @@ spec:
   # revokes memberships created out of band, for example by the
   # createrole_self_grant parameter
   inRolesUpdateStrategy: additive
+  inRoles:
+    - pg_read_all_data
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: DatabaseRole

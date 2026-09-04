@@ -117,6 +117,8 @@ spec:
       createdb: true
       createrole: true
       inRolesUpdateStrategy: additive
+      inRoles:
+        - pg_read_all_data
 ```
 
 :::caution
