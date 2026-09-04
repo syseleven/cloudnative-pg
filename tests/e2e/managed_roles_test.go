@@ -670,7 +670,7 @@ var _ = Describe("Managed roles tests", Label(tests.LabelSmoke, tests.LabelBasic
 			})
 
 			By("checking that the self-grant has been applied", func() {
-				query := fmt.Sprintf(`SELECT string_agg(inherit::text || '|' || set::text, ',')
+				query := fmt.Sprintf(`SELECT string_agg(inherit_option::text || '|' || set_option::text, ',')
 					FROM pg_catalog.pg_auth_members
 					WHERE member = (SELECT oid FROM pg_catalog.pg_authid WHERE rolname = %s)
 					AND roleid = (SELECT oid FROM pg_catalog.pg_authid WHERE rolname = %s)`,
