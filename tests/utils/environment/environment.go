@@ -83,7 +83,8 @@ type TestingEnvironment struct {
 	Log                        logr.Logger
 	PostgresImageName          string
 	PostgresImageTag           string
-	PostgresVersion            uint64
+	PostgresMajorVersion       uint64
+	PostgresMinorVersion       uint64
 	DefaultStorageClass        string
 	CSIStorageClass            string
 	DefaultVolumeSnapshotClass string
@@ -147,7 +148,8 @@ func NewTestingEnvironment() (*TestingEnvironment, error) {
 	if err != nil {
 		return nil, err
 	}
-	env.PostgresVersion = postgresImageVersion.Major()
+	env.PostgresMajorVersion = postgresImageVersion.Major()
+	env.PostgresMinorVersion = postgresImageVersion.Minor()
 
 	env.Client, err = client.New(env.RestClientConfig, client.Options{Scheme: env.Scheme})
 	if err != nil {

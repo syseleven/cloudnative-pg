@@ -138,7 +138,7 @@ func buildTemplateVariables(env *environment.TestingEnvironment) map[string]stri
 		"E2E_DEFAULT_VOLUMESNAPSHOT_CLASS": cfg.Storage.VolumeSnapshotClass,
 		"AZURE_STORAGE_ACCOUNT":            cfg.Azure.StorageAccount,
 		"AZURE_BLOB_CONTAINER":             cfg.Azure.BlobContainer,
-		"PG_MAJOR":                         strconv.FormatUint(env.PostgresVersion, 10),
+		"PG_MAJOR":                         strconv.FormatUint(env.PostgresMajorVersion, 10),
 	}
 
 	// Values computed while the tests run (snapshot names, backup names, ...)

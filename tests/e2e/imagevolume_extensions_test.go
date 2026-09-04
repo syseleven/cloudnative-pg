@@ -65,7 +65,7 @@ var _ = Describe("ImageVolume Extensions", Label(tests.LabelImageVolumeExtension
 		if !(IsKind() || IsK3D()) {
 			Skip("This test only runs on kind or k3d clusters")
 		}
-		if env.PostgresVersion < 18 {
+		if env.PostgresMajorVersion < 18 {
 			Skip("This test is only run on PostgreSQL v18 or greater")
 		}
 		// Require a stable PostgreSQL version
@@ -73,7 +73,7 @@ var _ = Describe("ImageVolume Extensions", Label(tests.LabelImageVolumeExtension
 		// of PostgreSQL
 		defaultVersion, err := version.FromTag(reference.New(versions.DefaultImageName).Tag)
 		Expect(err).NotTo(HaveOccurred())
-		if env.PostgresVersion > defaultVersion.Major() {
+		if env.PostgresMajorVersion > defaultVersion.Major() {
 			Skip("Running on a version newer than the default image, skipping this test")
 		}
 		// Require K8S 1.33 or greater
@@ -255,7 +255,7 @@ var _ = Describe("ImageVolume Extensions", Label(tests.LabelImageVolumeExtension
 			extensionConfig := apiv1.ExtensionConfiguration{
 				Name: "pgvector",
 				ImageVolumeSource: corev1.ImageVolumeSource{
-					Reference: fmt.Sprintf("ghcr.io/cloudnative-pg/pgvector:0.8.1-%d-trixie", env.PostgresVersion),
+					Reference: fmt.Sprintf("ghcr.io/cloudnative-pg/pgvector:0.8.1-%d-trixie", env.PostgresMajorVersion),
 				},
 			}
 			additionalGucParams := map[string]string{
@@ -310,12 +310,12 @@ var _ = Describe("ImageVolume Extensions", Label(tests.LabelImageVolumeExtension
 					Images: []apiv1.CatalogImage{
 						{
 							Image: postgresImage,
-							Major: int(env.PostgresVersion),
+							Major: int(env.PostgresMajorVersion),
 							Extensions: []apiv1.ExtensionConfiguration{
 								{
 									Name: "postgis",
 									ImageVolumeSource: corev1.ImageVolumeSource{
-										Reference: fmt.Sprintf("ghcr.io/cloudnative-pg/postgis-extension:3.6.1-%d-trixie", env.PostgresVersion),
+										Reference: fmt.Sprintf("ghcr.io/cloudnative-pg/postgis-extension:3.6.1-%d-trixie", env.PostgresMajorVersion),
 									},
 									LdLibraryPath: []string{"/system"},
 								},
@@ -337,7 +337,7 @@ var _ = Describe("ImageVolume Extensions", Label(tests.LabelImageVolumeExtension
 							Name:     catalogName,
 							Kind:     "ImageCatalog",
 						},
-						Major: int(env.PostgresVersion),
+						Major: int(env.PostgresMajorVersion),
 					},
 					PostgresConfiguration: apiv1.PostgresConfiguration{
 						Extensions: []apiv1.ExtensionConfiguration{
@@ -401,7 +401,7 @@ var _ = Describe("ImageVolume Extensions", Label(tests.LabelImageVolumeExtension
 			catalog.Spec.Images[0].Extensions = append(catalog.Spec.Images[0].Extensions, apiv1.ExtensionConfiguration{
 				Name: "pgvector",
 				ImageVolumeSource: corev1.ImageVolumeSource{
-					Reference: fmt.Sprintf("ghcr.io/cloudnative-pg/pgvector:0.8.1-%d-trixie", env.PostgresVersion),
+					Reference: fmt.Sprintf("ghcr.io/cloudnative-pg/pgvector:0.8.1-%d-trixie", env.PostgresMajorVersion),
 				},
 			})
 			err = objects.Update(env.Ctx, env.Client, catalog)

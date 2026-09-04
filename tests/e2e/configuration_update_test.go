@@ -464,7 +464,7 @@ var _ = Describe("Configuration update", Label(tests.LabelClusterMetadata), func
 
 		It("9. reloading PG when pg_ident rules are modified", func() {
 			// pg_ident_file_mappings is available from v15 only
-			if env.PostgresVersion > 14 {
+			if env.PostgresMajorVersion > 14 {
 				primaryPod, err := clusterutils.GetPrimary(env.Ctx, env.Client, namespace, clusterName)
 				Expect(err).ToNot(HaveOccurred())
 				query := "select count(1) from pg_catalog.pg_ident_file_mappings;"

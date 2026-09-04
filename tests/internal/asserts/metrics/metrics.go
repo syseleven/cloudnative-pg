@@ -134,7 +134,7 @@ func CollectAndAssertDefaultMetricsPresentOnEachPod(
 			"cnpg_pg_stat_database",
 		}
 
-		if env.PostgresVersion > 16 {
+		if env.PostgresMajorVersion > 16 {
 			defaultMetrics = append(
 				defaultMetrics,
 				"cnpg_pg_stat_checkpointer",
@@ -191,7 +191,7 @@ func CollectAndAssertCollectorMetricsPresentOnEachPod(
 		"cnpg_collector_replica_mode",
 	}
 
-	if env.PostgresVersion >= 14 {
+	if env.PostgresMajorVersion >= 14 {
 		cnpgCollectorMetrics = append(
 			cnpgCollectorMetrics,
 			"cnpg_collector_wal_records",
@@ -199,7 +199,7 @@ func CollectAndAssertCollectorMetricsPresentOnEachPod(
 			"cnpg_collector_wal_bytes",
 			"cnpg_collector_wal_buffers_full",
 		)
-		if env.PostgresVersion < 18 {
+		if env.PostgresMajorVersion < 18 {
 			cnpgCollectorMetrics = append(
 				cnpgCollectorMetrics,
 				"cnpg_collector_wal_write",
