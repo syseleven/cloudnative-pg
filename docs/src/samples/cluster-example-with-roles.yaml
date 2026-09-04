@@ -12,6 +12,14 @@ spec:
     - name: app
       createdb: true
       login: true
+    # With the additive strategy the operator only grants the roles listed
+    # in inRoles and never revokes memberships created out of band, for
+    # example by the createrole_self_grant parameter
+    - name: admin
+      createdb: true
+      createrole: true
+      login: true
+      inRolesUpdateStrategy: additive
     - name: dante
       ensure: present
       comment: my database-side comment

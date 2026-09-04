@@ -24,6 +24,7 @@ import (
 	"database/sql"
 	"fmt"
 	"reflect"
+	"slices"
 	"sort"
 
 	"github.com/jackc/pgx/v5/pgtype"
@@ -50,6 +51,11 @@ type DatabaseRole struct {
 	ValidUntil      pgtype.Timestamp `json:"validUntil,omitempty"`
 	InRoles         []string         `json:"inRoles,omitempty"`
 	password        sql.NullString   `json:"-"`
+	// inRolesAdditive is true when the role's memberships must be
+	// reconciled additively: grant the roles listed in InRoles, but never
+	// revoke memberships that are present in the database and not listed
+	// in InRoles (e.g. memberships granted by createrole_self_grant)
+	inRolesAdditive bool `json:"-"`
 	// passwordPassthrough, when true, instructs the instance manager to send the
 	// password literal verbatim rather than SCRAM-SHA-256 encoding it
 	// client-side. It is populated from the cnpg.io/passwordPassthrough
@@ -73,6 +79,17 @@ func (d *DatabaseRole) hasSameCommentAs(inSpec apiv1.RoleConfiguration) bool {
 }
 
 func (d *DatabaseRole) isInSameRolesAs(inSpec apiv1.RoleConfiguration) bool {
+	if inSpec.InRolesUpdateStrategy == apiv1.InRolesUpdateStrategyAdditive {
+		// additive strategy: the role is in sync when every membership
+		// listed in the spec is already present in the database
+		for _, inRole := range inSpec.InRoles {
+			if !slices.Contains(d.InRoles, inRole) {
+				return false
+			}
+		}
+		return true
+	}
+
 	if len(d.InRoles) == 0 && len(inSpec.InRoles) == 0 {
 		return true
 	}

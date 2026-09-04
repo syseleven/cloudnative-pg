@@ -11,6 +11,22 @@ spec:
 apiVersion: postgresql.cnpg.io/v1
 kind: DatabaseRole
 metadata:
+  name: cluster-example-admin
+spec:
+  cluster:
+    name: cluster-example
+  name: admin
+  login: true
+  createdb: true
+  createrole: true
+  # the operator only grants the roles listed in inRoles and never
+  # revokes memberships created out of band, for example by the
+  # createrole_self_grant parameter
+  inRolesUpdateStrategy: additive
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: DatabaseRole
+metadata:
   name: role-dante
 spec:
   cluster:

@@ -77,6 +77,7 @@ func DatabaseRoleFromConfiguration(config apiv1.RoleConfiguration, validUntilNul
 		BypassRLS:       config.BypassRLS,
 		ConnectionLimit: config.ConnectionLimit,
 		InRoles:         config.InRoles,
+		inRolesAdditive: config.InRolesUpdateStrategy == apiv1.InRolesUpdateStrategyAdditive,
 	}
 	switch {
 	case config.ValidUntil != nil:
