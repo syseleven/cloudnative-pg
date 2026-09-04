@@ -687,7 +687,7 @@ var _ = Describe("Managed roles tests", Label(tests.LabelSmoke, tests.LabelBasic
 					if err != nil {
 						return ERROR
 					}
-					return stdout
+					return strings.TrimSpace(stdout)
 				}, 30).Should(Equal("t|t"))
 			})
 
