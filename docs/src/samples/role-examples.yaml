@@ -19,9 +19,6 @@ spec:
   login: true
   createdb: true
   createrole: true
-  # the operator only grants the roles listed in inRoles and never
-  # revokes memberships created out of band, for example by the
-  # createrole_self_grant parameter
   inRolesUpdateStrategy: additive
   inRoles:
     - pg_read_all_data

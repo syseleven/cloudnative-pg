@@ -51,11 +51,7 @@ type DatabaseRole struct {
 	ValidUntil      pgtype.Timestamp `json:"validUntil,omitempty"`
 	InRoles         []string         `json:"inRoles,omitempty"`
 	password        sql.NullString   `json:"-"`
-	// inRolesAdditive is true when the role's memberships must be
-	// reconciled additively: grant the roles listed in InRoles, but never
-	// revoke memberships that are present in the database and not listed
-	// in InRoles (e.g. memberships granted by createrole_self_grant)
-	inRolesAdditive bool `json:"-"`
+	inRolesAdditive bool             `json:"-"`
 	// passwordPassthrough, when true, instructs the instance manager to send the
 	// password literal verbatim rather than SCRAM-SHA-256 encoding it
 	// client-side. It is populated from the cnpg.io/passwordPassthrough

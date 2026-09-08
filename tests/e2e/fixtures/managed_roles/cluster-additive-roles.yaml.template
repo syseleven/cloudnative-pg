@@ -10,9 +10,6 @@ spec:
     storageClass: ${E2E_DEFAULT_STORAGE_CLASS}
   postgresql:
     parameters:
-      # Requires PostgreSQL 16+: when a role with CREATEROLE creates
-      # a new role, it automatically gets the listed privileges (SET and
-      # INHERIT memberships) on the new role
       createrole_self_grant: "set, inherit"
   managed:
     roles:
@@ -22,9 +19,6 @@ spec:
       login: true
       createdb: true
       createrole: true
-      # additive: the operator must grant the inRoles listed below but must
-      # never revoke memberships granted out of band, such as the ones
-      # created by createrole_self_grant
       inRolesUpdateStrategy: additive
       passwordSecret:
         name: cluster-additive-roles-admin
