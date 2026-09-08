@@ -11,6 +11,21 @@ spec:
 apiVersion: postgresql.cnpg.io/v1
 kind: DatabaseRole
 metadata:
+  name: cluster-example-admin
+spec:
+  cluster:
+    name: cluster-example
+  name: admin
+  login: true
+  createdb: true
+  createrole: true
+  inRolesUpdateStrategy: additive
+  inRoles:
+    - pg_read_all_data
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: DatabaseRole
+metadata:
   name: role-dante
 spec:
   cluster:

@@ -70,6 +70,65 @@ A few points are worth noting:
 
 -----
 
+## Membership reconciliation strategy
+
+By default, the operator keeps a role's memberships exactly in line with the
+`inRoles` list: missing memberships are granted with `GRANT`, and memberships
+that are present in the database but not listed in `inRoles` are revoked with
+`REVOKE`. This means any membership created out of band (manually, by an
+application, or by another operator) is removed on the next reconciliation.
+
+You can change this with the `inRolesUpdateStrategy` attribute, available in
+both the inline [`managed.roles`](#inline-managed-roles) stanza and the
+[`DatabaseRole`](#the-databaserole-resource) resource:
+
+- **`replace`** (default): full reconciliation of memberships, as described
+  above.
+- **`additive`**: the operator only grants the memberships listed in
+  `inRoles` and never revokes existing memberships. Memberships granted out
+  of band are preserved.
+
+### Use case: `createrole_self_grant`
+
+Since PostgreSQL 16, the `createrole_self_grant` parameter lets a role
+with `CREATEROLE` automatically obtain `SET` and/or `INHERIT` memberships on
+every role it creates, for example:
+
+```yaml
+spec:
+  postgresql:
+    parameters:
+      createrole_self_grant: "set, inherit"
+```
+
+A role that creates roles this way (such as a DBaaS `admin` role) accumulates
+memberships that are not part of its specification. With the default
+`replace` strategy, the operator would revoke those memberships on the next
+reconciliation. Setting `inRolesUpdateStrategy: additive` on such a role
+stops the operator from touching the out-of-band memberships while still
+enforcing the ones you declare:
+
+```yaml
+spec:
+  managed:
+    roles:
+    - name: admin
+      login: true
+      createdb: true
+      createrole: true
+      inRolesUpdateStrategy: additive
+      inRoles:
+        - pg_read_all_data
+```
+
+:::caution
+With the `additive` strategy, removing a membership from `inRoles` does **not**
+revoke it: the operator only grants, it never revokes. To remove a membership,
+switch the role back to `replace` (or `REVOKE` it manually).
+:::
+
+-----
+
 ## The `DatabaseRole` resource
 
 The `DatabaseRole` custom resource provides a dedicated, Kubernetes-native way to
@@ -155,12 +214,14 @@ How you remove a role depends on how it was created:
 Creating a `DatabaseRole` for a role that already exists **adopts** it: the
 operator alters the existing role so that **every** attribute matches the
 manifest, including the attributes you omit, which are forced back to their
-defaults. In particular, memberships not listed in `inRoles` are revoked, an
-omitted `connectionLimit` is reset to `-1` (unlimited), and an omitted
-`validUntil` becomes `infinity` if the role had an expiration date. Review
-the current attributes and memberships of a role before adopting it, and do
-not point a `DatabaseRole` at a role you only want to drop, since it will be
-modified before it can be removed.
+defaults. In particular, with the default
+[membership reconciliation strategy](#membership-reconciliation-strategy),
+memberships not listed in `inRoles` are revoked, an omitted `connectionLimit`
+is reset to `-1` (unlimited), and an omitted `validUntil` becomes `infinity`
+if the role had an expiration date. Review the current attributes and
+memberships of a role before adopting it, and do not point a `DatabaseRole`
+at a role you only want to drop, since it will be modified before it can be
+removed.
 :::
 
 ### Status of `DatabaseRole` resources
