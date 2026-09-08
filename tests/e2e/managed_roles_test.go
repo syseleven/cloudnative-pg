@@ -688,7 +688,7 @@ var _ = Describe("Managed roles tests", Label(tests.LabelSmoke, tests.LabelBasic
 						return ERROR
 					}
 					return strings.TrimSpace(stdout)
-				}, 30).Should(Equal("t|t"))
+				}, 30).Should(Equal("true|true"))
 			})
 
 			By("declaring a membership on the admin role to force a reconciliation", func() {
