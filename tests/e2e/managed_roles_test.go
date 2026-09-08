@@ -632,7 +632,7 @@ var _ = Describe("Managed roles tests", Label(tests.LabelSmoke, tests.LabelBasic
 		var clusterName, namespace string
 
 		BeforeAll(func() {
-			if env.PostgresMajorVersion < 16 {
+			if env.PostgresVersion < 16 {
 				Skip("This test requires the createrole_self_grant parameter (PostgreSQL 16+)")
 			}
 

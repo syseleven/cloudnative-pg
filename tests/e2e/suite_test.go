@@ -117,7 +117,7 @@ E2E test configuration:
 `,
 		versions.Version,
 		env.PostgresImageName, env.PostgresImageTag,
-		env.PostgresMajorVersion,
+		env.PostgresVersion,
 		display(cfg.Postgres.ImageRepository),
 		display(cfg.Postgres.PostGISImageRepository),
 		display(cfg.Postgres.PreRollingUpdateImage),
