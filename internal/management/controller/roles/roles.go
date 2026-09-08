@@ -66,18 +66,18 @@ func (role roleConfigurationAdapter) toDatabaseRole() DatabaseRole {
 // provides a PasswordSecret nor sets DisablePassword, is to IGNORE the password.
 func DatabaseRoleFromConfiguration(config apiv1.RoleConfiguration, validUntilNullIsInfinity bool) DatabaseRole {
 	dbRole := DatabaseRole{
-		Name:            config.Name,
-		Comment:         config.Comment,
-		Superuser:       config.Superuser,
-		CreateDB:        config.CreateDB,
-		CreateRole:      config.CreateRole,
-		Inherit:         config.GetRoleInherit(),
-		Login:           config.Login,
-		Replication:     config.Replication,
-		BypassRLS:       config.BypassRLS,
-		ConnectionLimit: config.ConnectionLimit,
-		InRoles:         config.InRoles,
-		inRolesAdditive: config.InRolesUpdateStrategy == apiv1.InRolesUpdateStrategyAdditive,
+		Name:                  config.Name,
+		Comment:               config.Comment,
+		Superuser:             config.Superuser,
+		CreateDB:              config.CreateDB,
+		CreateRole:            config.CreateRole,
+		Inherit:               config.GetRoleInherit(),
+		Login:                 config.Login,
+		Replication:           config.Replication,
+		BypassRLS:             config.BypassRLS,
+		ConnectionLimit:       config.ConnectionLimit,
+		InRoles:               config.InRoles,
+		InRolesUpdateStrategy: config.InRolesUpdateStrategy,
 	}
 	switch {
 	case config.ValidUntil != nil:

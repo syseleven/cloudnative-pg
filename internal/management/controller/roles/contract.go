@@ -24,7 +24,6 @@ import (
 	"database/sql"
 	"fmt"
 	"reflect"
-	"slices"
 	"sort"
 
 	"github.com/jackc/pgx/v5/pgtype"
@@ -37,21 +36,21 @@ import (
 // The password management in the apiv1.RoleConfiguration assumes the use of Secrets,
 // so cannot cleanly be mapped to Postgres
 type DatabaseRole struct {
-	Name            string           `json:"name"`
-	Comment         string           `json:"comment,omitempty"`
-	Superuser       bool             `json:"superuser,omitempty"`
-	CreateDB        bool             `json:"createdb,omitempty"`
-	CreateRole      bool             `json:"createrole,omitempty"`
-	Inherit         bool             `json:"inherit,omitempty"` // defaults to true
-	Login           bool             `json:"login,omitempty"`
-	Replication     bool             `json:"replication,omitempty"`
-	BypassRLS       bool             `json:"bypassrls,omitempty"` // Row-Level Security
-	ignorePassword  bool             `json:"-"`
-	ConnectionLimit int64            `json:"connectionLimit,omitempty"` // default is -1
-	ValidUntil      pgtype.Timestamp `json:"validUntil,omitempty"`
-	InRoles         []string         `json:"inRoles,omitempty"`
-	password        sql.NullString   `json:"-"`
-	inRolesAdditive bool             `json:"-"`
+	Name                  string                      `json:"name"`
+	Comment               string                      `json:"comment,omitempty"`
+	Superuser             bool                        `json:"superuser,omitempty"`
+	CreateDB              bool                        `json:"createdb,omitempty"`
+	CreateRole            bool                        `json:"createrole,omitempty"`
+	Inherit               bool                        `json:"inherit,omitempty"` // defaults to true
+	Login                 bool                        `json:"login,omitempty"`
+	Replication           bool                        `json:"replication,omitempty"`
+	BypassRLS             bool                        `json:"bypassrls,omitempty"` // Row-Level Security
+	ignorePassword        bool                        `json:"-"`
+	ConnectionLimit       int64                       `json:"connectionLimit,omitempty"` // default is -1
+	ValidUntil            pgtype.Timestamp            `json:"validUntil,omitempty"`
+	InRoles               []string                    `json:"inRoles,omitempty"`
+	password              sql.NullString              `json:"-"`
+	InRolesUpdateStrategy apiv1.InRolesUpdateStrategy `json:"inRolesUpdateStrategy,omitempty"`
 	// passwordPassthrough, when true, instructs the instance manager to send the
 	// password literal verbatim rather than SCRAM-SHA-256 encoding it
 	// client-side. It is populated from the cnpg.io/passwordPassthrough
@@ -78,8 +77,12 @@ func (d *DatabaseRole) isInSameRolesAs(inSpec apiv1.RoleConfiguration) bool {
 	if inSpec.InRolesUpdateStrategy == apiv1.InRolesUpdateStrategyAdditive {
 		// additive strategy: the role is in sync when every membership
 		// listed in the spec is already present in the database
+		dbRoles := make(map[string]struct{}, len(d.InRoles))
+		for _, role := range d.InRoles {
+			dbRoles[role] = struct{}{}
+		}
 		for _, inRole := range inSpec.InRoles {
-			if !slices.Contains(d.InRoles, inRole) {
+			if _, found := dbRoles[inRole]; !found {
 				return false
 			}
 		}

@@ -753,8 +753,8 @@ var _ = Describe("Role synchronizer tests", func() {
 			mock.ExpectQuery(expectedMembershipStmt).WithArgs("role_to_test1").WillReturnRows(rows)
 
 			dbRole := DatabaseRole{
-				Name:            "role_to_test1",
-				inRolesAdditive: true,
+				Name:                  "role_to_test1",
+				InRolesUpdateStrategy: apiv1.InRolesUpdateStrategyAdditive,
 			}
 			grants, revokes, err := GetRoleMembershipDiff(ctx, db, []string{"foo", "baz"}, dbRole)
 			Expect(err).ShouldNot(HaveOccurred())
