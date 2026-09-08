@@ -90,7 +90,7 @@ both the inline [`managed.roles`](#inline-managed-roles) stanza and the
 
 ### Use case: `createrole_self_grant`
 
-Since PostgreSQL 17.10/18, the `createrole_self_grant` parameter lets a role
+Since PostgreSQL 16, the `createrole_self_grant` parameter lets a role
 with `CREATEROLE` automatically obtain `SET` and/or `INHERIT` memberships on
 every role it creates, for example:
 

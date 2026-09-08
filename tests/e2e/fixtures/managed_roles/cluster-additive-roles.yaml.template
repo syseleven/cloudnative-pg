@@ -10,7 +10,7 @@ spec:
     storageClass: ${E2E_DEFAULT_STORAGE_CLASS}
   postgresql:
     parameters:
-      # Requires PostgreSQL 17.10+/18: when a role with CREATEROLE creates
+      # Requires PostgreSQL 16+: when a role with CREATEROLE creates
       # a new role, it automatically gets the listed privileges (SET and
       # INHERIT memberships) on the new role
       createrole_self_grant: "set, inherit"

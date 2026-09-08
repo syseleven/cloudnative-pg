@@ -1046,6 +1046,7 @@ impactful
 importsource
 inProgress
 inRoles
+inRolesUpdateStrategy
 inrolesupdatestrategy
 indistinctively
 inheritFromAzureAD
